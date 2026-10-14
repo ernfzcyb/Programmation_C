@@ -64,6 +64,16 @@ MatErreur mat_ecrire(FILE *f, const Matrice *m)
     /* FOURNI : première ligne du fichier = les dimensions. */
     if (fprintf(f, "%d %d\n", m->nb_lignes, m->nb_colonnes) < 0)
         return MAT_ERR_ECRITURE;
+    for (int i = 0; i < m->nb_lignes; i++) {
+     for (int j = 0; j < m->nb_colonnes; j++){
+      if (fprintf(f, j==0 ? "%d" : " %d", m->coef[i][j]) < 0){
+        return MAT_ERR_ECRITURE;
+      }
+     }
+     if (fputc('\n',f) == EOF){
+        return MAT_ERR_ECRITURE;
+    }
+}
 
     /* (2.b) À COMPLÉTER : pour chaque ligne i de la matrice :
      *         - écrire les coefficients séparés par UN espace :
