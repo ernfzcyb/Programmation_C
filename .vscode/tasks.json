@@ -1,28 +1,32 @@
 {
+    "version": "2.0.0",
     "tasks": [
         {
-            "type": "cppbuild",
-            "label": "C/C++: gcc.exe générer le fichier actif",
-            "command": "C:\\TDM-GCC-64\\bin\\gcc.exe",
+            "type": "shell",
+            "label": "Compiler demo_matrices",
+            "command": "gcc",
             "args": [
-                "-fdiagnostics-color=always",
+                "-std=c11",
+                "-Wall",
+                "-Wextra",
+                "-Wpedantic",
                 "-g",
-                "${file}",
+                "main.c",
+                "matrice.c",
+                "matrice_alloc.c",
+                "matrice_io.c",
+                "matrice_calcul.c",
                 "-o",
-                "${fileDirname}\\${fileBasenameNoExtension}.exe"
+                "demo_matrices.exe"
             ],
             "options": {
-                "cwd": "${fileDirname}"
+                "cwd": "${workspaceFolder}/td_matrices"
             },
-            "problemMatcher": [
-                "$gcc"
-            ],
+            "problemMatcher": ["$gcc"],
             "group": {
                 "kind": "build",
                 "isDefault": true
-            },
-            "detail": "Tâche générée par le débogueur."
+            }
         }
-    ],
-    "version": "2.0.0"
+    ]
 }
