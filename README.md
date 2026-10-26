@@ -136,4 +136,121 @@ donc au Premier appel mat_detruire(&a) libèrerat la tableau ensuite il y aura u
 **Reponse :**
 Dans le but de faire un code robuste on affecte avant toute action une matrice vide afin de permettre un retour exploitable, stable et déterminé en cas d'erreur.
 
+
 #### **exercice 2**
+- *2.a :*
+```bash
+    for (int i = 0; i < m->nb_lignes; i++) {
+     for (int j = 0; j < m->nb_colonnes; j++){
+      printf(" %8d", m->coef[i][j]);
+    }
+    putchar('\n');
+    }
+
+```
+- *2.b :*
+```bash
+    for (int i = 0; i < m->nb_lignes; i++) {
+        for (int j = 0; j < m->nb_colonnes; j++){
+      if (fprintf(f, j==0 ? "%d" : " %d", m->coef[i][j]) < 0){
+        return MAT_ERR_ECRITURE;
+      }
+     }
+     if (fputc('\n',f) == EOF){
+        return MAT_ERR_ECRITURE;
+    }
+}
+```
+- *2.c :*
+```bash
+     if(nb_lignes<1 || nb_lignes > MAT_DIM_MAX || nb_colonnes<1 || nb_colonnes > MAT_DIM_MAX) {
+        return MAT_ERR_FORMAT;
+    }
+```
+- *2.d :*
+```bash
+   Matrice tmp;
+   err = mat_allouer(&tmp, nb_lignes, nb_colonnes);
+   if (err != MAT_OK) 
+   return err;
+```
+- *2.e :*
+```bash
+         for (int i = 0; i < nb_lignes; i++) {
+     for (int j = 0; j < nb_colonnes; j++){
+            err=lire_entier(f, &tmp.coef[i][j]);
+            if (err != MAT_OK){
+              mat_detruire(&tmp);  
+               return err;   
+            } 
+        }
+    } 
+```
+- *2.f :*
+```bash
+      *res = tmp; 
+      return MAT_OK; 
+```
+Nous avons suprimé 
+```bash
+return MAT_ERR_LECTURE;
+```
+
+execution tolal :
+```bash
+==1042== Memcheck, a memory error detector
+==1042== Copyright (C) 2002-2024, and GNU GPL'd, by Julian Seward et al.
+==1042== Using Valgrind-3.26.0 and LibVEX; rerun with -h for copyright info
+==1042== Command: ./test_ex2
+==1042== 
+=== Exercice 2 : affichage (verification visuelle) ===
+M (4 x 3) :
+        1        2        3
+        4        5        6
+        7        8        9
+       10       11       12
+(2.a) Vous devez voir ci-dessus 4 lignes : 1 2 3 / 4 5 6 / 7 8 9 / 10 11 12
+=== Exercice 2 : ecriture ===
+[OK]    ouverture de test_ex2_sortie.txt en ecriture
+[OK]    (2.b) mat_ecrire renvoie MAT_OK
+[OK]    (2.b) le fichier contient exactement le format attendu
+[OK]    (2.b) mat_ecrire refuse une matrice vide
+=== Exercice 2 : relecture ===
+[OK]    (2.f) mat_lire relit le fichier : MAT_OK
+[OK]    (2.e) la matrice relue est identique
+[OK]    (2.e) espaces et sauts de ligne en trop sont toleres
+=== Exercice 2 : fichiers incorrects ===
+[OK]    (2.c) fichier vide
+[OK]    (2.c) dimension nulle
+[OK]    (2.c) dimension negative
+[OK]    (2.e) coefficient manquant
+[OK]    (2.e) donnee non numerique
+[OK]    (2.e) entier trop grand pour un int
+=== Exercice 2 : echec d'allocation simule ===
+[OK]    (2.d) mat_lire renvoie MAT_ERR_ALLOCATION proprement
+
+Bilan : 14 / 14 verifications reussies.
+Pensez a verifier l'absence de fuite : valgrind --leak-check=full ./test_ex2
+==1042== 
+==1042== HEAP SUMMARY:
+==1042==     in use at exit: 0 bytes in 0 blocks
+==1042==   total heap usage: 51 allocs, 51 frees, 60,728 bytes allocated
+==1042== 
+==1042== All heap blocks were freed -- no leaks are possible
+==1042== 
+==1042== For lists of detected and suppressed errors, rerun with: -s
+==1042== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
+```
+
+#### Q4.1 
+*Pourquoi mat_lire remplit-elle d'abord une matrice locale avant de l'affecter à* *res ?*
+
+#### Q4.2
+ *La lecture vérifie-t-elle que chaque ligne de la matrice est sur sa propre ligne de texte ? Est-ce gênant ? Justifiez le principe « tolérant en lecture, strict en écriture ».*
+
+#### Q4.3
+*Après l'appel mat_lire(f, &m), le flux f est positionné après le dernier coefficient. Comment exploiter cette propriété pour stocker deux matrices dans un même fichier ?*
+
+#### Q4.4 
+*Pourquoi mat_ecrire appelle-t-elle fflush avant de renvoyer MAT_OK ? Cela dispense-t-il
+l'appelant de tester fclose ?*
