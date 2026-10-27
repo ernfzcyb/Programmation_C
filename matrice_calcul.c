@@ -116,7 +116,7 @@ MatErreur mat_multiplier(const Matrice *a, const Matrice *b,
         }
     }
 
-    /* (3.h) À COMPLÉTER : *res = r;  return MAT_OK;                    */
-    mat_detruire(&r);            /* ligne provisoire : à supprimer en (3.h) */
-    return MAT_ERR_LECTURE;      /* ligne provisoire : à remplacer en (3.h) */
+    /* (3.h) complété */
+    *res = r; 
+    return MAT_OK;
 }
