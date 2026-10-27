@@ -140,5 +140,4 @@ MatErreur mat_lire(FILE *f, Matrice *res)
       *res = tmp; 
       return MAT_OK;                             
 
-    return MAT_ERR_LECTURE;  /* ligne provisoire : à remplacer en (2.f) */
 }

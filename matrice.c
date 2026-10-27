@@ -39,6 +39,4 @@ int mat_est_valide(const Matrice *m)
               m->nb_lignes >= 1 && m->nb_lignes <= MAT_DIM_MAX &&
               m->nb_colonnes >= 1 && m->nb_colonnes <= MAT_DIM_MAX;
 
-    (void)m;      /* ligne provisoire : à supprimer en (1.b) */
-    return 0;     /* ligne provisoire : à remplacer en (1.b) */
 }
