@@ -37,12 +37,14 @@ MatErreur mat_additionner(const Matrice *a, const Matrice *b,
     if (err != MAT_OK)
         return err;
 
-    /* (3.a) À COMPLÉTER : si a et b n'ont pas le même nombre de lignes
-     *       OU pas le même nombre de colonnes,
-     *       renvoyer MAT_ERR_DIMENSIONS.                              */
+    /* (3.a) complété                               */
+    if ((a->nb_lignes!=b->nb_lignes) || (a->nb_colonnes!=b->nb_colonnes)){
+        return MAT_ERR_DIMENSIONS;
+
+    }
 
 
-    /* (3.b) À COMPLÉTER : allouer r avec les dimensions de a ;
+    /* (3.b) À COMPLÉTER : allouer r avec les dimensions de a 
      *         err = mat_allouer(&r, ..., ...);
      *         if (err != MAT_OK) return err;                          */
     Matrice r = MATRICE_VIDE;
