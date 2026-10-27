@@ -369,3 +369,22 @@ a ←a+baunsens?Quesepasserait-il avec notre implémentation si on l’acceptait
 #### Q5.4
  *Pourquoi ne suffit-il pas de calculer int s = a + b; puis de tester s < a pour détecter un
  dépassement 
+
+valgrind du 6.2
+```bash
+==1117== Memcheck, a memory error detector
+==1117== Copyright (C) 2002-2024, and GNU GPL'd, by Julian Seward et al.
+==1117== Using Valgrind-3.26.0 and LibVEX; rerun with -h for copyright info
+==1117== Command: ./demo_matrices
+==1117== 
+Usage : ./demo_matrices <add|mul> <fichier_A> <fichier_B> <fichier_R>
+==1117== 
+==1117== HEAP SUMMARY:
+==1117==     in use at exit: 0 bytes in 0 blocks
+==1117==   total heap usage: 0 allocs, 0 frees, 0 bytes allocated
+==1117== 
+==1117== All heap blocks were freed -- no leaks are possible
+==1117== 
+==1117== For lists of detected and suppressed errors, rerun with: -s
+==1117== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
+````
