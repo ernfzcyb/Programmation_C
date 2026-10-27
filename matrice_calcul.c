@@ -33,7 +33,7 @@ static int tient_dans_int(long long v)
 MatErreur mat_additionner(const Matrice *a, const Matrice *b,
                           Matrice *res)
 {
-    MatErreur err = verifier_parametres(a, b, res);      /* FOURNI */
+    MatErreur err = verifier_parametres(a, b, res);      
     if (err != MAT_OK)
         return err;
 
@@ -45,21 +45,20 @@ MatErreur mat_additionner(const Matrice *a, const Matrice *b,
 
 
     /* (3.b) complété */
-     err = mat_allouer(&r,a->nb_lignes, a->nb_colonnes);
-     if (err != MAT_OK) 
-       return err;                          
     Matrice r = MATRICE_VIDE;
+    err = mat_allouer(&r,a->nb_lignes, a->nb_colonnes);
+    if (err != MAT_OK) 
+     return err;                          
+    
 
 
     /* FOURNI : parcours de tous les coefficients de r. */
     for (int i = 0; i < r.nb_lignes; i++) {
         for (int j = 0; j < r.nb_colonnes; j++) {
-            /* (3.c) À COMPLÉTER : calculer la somme des coefficients
-             *       (i, j) de a et de b EN long long :
-             *         long long s = (long long)a->coef[i][j] + ... ;  */
-            long long s = 0;   /* ligne provisoire : à remplacer en (3.c) */
+            /*(3.c) complété*/
+             long long s = (long long)a->coef[i][j] + b->coef[i][j];
 
-            if (!tient_dans_int(s)) {                    /* FOURNI */
+            if (!tient_dans_int(s)) {                    
                 mat_detruire(&r);
                 return MAT_ERR_DEPASSEMENT;
             }
