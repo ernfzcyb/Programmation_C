@@ -196,7 +196,7 @@ Nous avons suprimé
 return MAT_ERR_LECTURE;
 ```
 
-execution tolal :
+Test final avec Valgrind:
 ```bash
 ==1042== Memcheck, a memory error detector
 ==1042== Copyright (C) 2002-2024, and GNU GPL'd, by Julian Seward et al.
@@ -254,3 +254,118 @@ Pensez a verifier l'absence de fuite : valgrind --leak-check=full ./test_ex2
 #### Q4.4 
 *Pourquoi mat_ecrire appelle-t-elle fflush avant de renvoyer MAT_OK ? Cela dispense-t-il
 l'appelant de tester fclose ?*
+#### **exercice 3**
+- *3.a :*
+```bash
+    if ((((nb_lignes < 1) || (nb_lignes > MAT_DIM_MAX)))||(((nb_colonnes < 1) || (nb_colonnes > MAT_DIM_MAX)))){
+        return MAT_ERR_ARGUMENT;
+    }
+```
+- *3.b :*
+```bash
+    Matrice r = MATRICE_VIDE;
+    err = mat_allouer(&r,a->nb_lignes, a->nb_colonnes);
+    if (err != MAT_OK) 
+        return err;                          
+    
+```
+- *3.c :*
+```bash
+    long long s = (long long)a->coef[i][j] + b->coef[i][j];
+```
+- *3.d :*
+```bash
+    *res = r; 
+    return MAT_OK; 
+```
+```bash
+=== Exercice 3 : addition ===
+[OK]    (3.a) (2 x 3) + (3 x 2) : MAT_ERR_DIMENSIONS
+[OK]    (3.d) (2 x 3) + (2 x 3) : MAT_OK
+[OK]    (3.c) a + b est correct
+[OK]    a et b n'ont pas ete modifiees
+[OK]    (3.b) le resultat possede sa propre memoire
+[OK]    (3.c) INT_MAX + 1 : MAT_ERR_DEPASSEMENT
+```
+On a bien toute la partie addition qui est valide
+- *3.e :*
+```bash
+if (a->nb_colonnes != b->nb_lignes){
+        return MAT_ERR_DIMENSIONS;
+    }
+```
+- *3.f :*
+```bash
+    Matrice r = MATRICE_VIDE;
+    err = mat_allouer(&r,a->nb_lignes, b->nb_colonnes);
+    if (err != MAT_OK) 
+     return err;
+```
+- *3.g :*
+```bash
+for (int k = 0; k < a->nb_colonnes; k++) {
+                long long p = (long long)a->coef[i][k] * b->coef[k][j];
+                if ((p > 0 && s > LLONG_MAX - p)
+                    || (p < 0 && s < LLONG_MIN - p)) {
+                        mat_detruire(&r);
+                        return MAT_ERR_DEPASSEMENT;
+                    }
+                s += p;
+               }            
+```
+- *3.h :*
+```bash
+    *res = r; 
+    return MAT_OK;
+```
+```bash
+Test Final  avec Valgrind
+==1514== Memcheck, a memory error detector
+==1514== Copyright (C) 2002-2024, and GNU GPL'd, by Julian Seward et al.
+==1514== Using Valgrind-3.26.0 and LibVEX; rerun with -h for copyright info
+==1514== Command: ./test_ex3
+==1514== 
+=== Exercice 3 : addition ===
+[OK]    (3.a) (2 x 3) + (3 x 2) : MAT_ERR_DIMENSIONS
+[OK]    (3.d) (2 x 3) + (2 x 3) : MAT_OK
+[OK]    (3.c) a + b est correct
+[OK]    a et b n'ont pas ete modifiees
+[OK]    (3.b) le resultat possede sa propre memoire
+[OK]    (3.c) INT_MAX + 1 : MAT_ERR_DEPASSEMENT
+=== Exercice 3 : multiplication ===
+[OK]    (3.e) (2 x 3) x (2 x 3) : MAT_ERR_DIMENSIONS
+[OK]    (3.h) (2 x 3) x (3 x 2) : MAT_OK
+[OK]    (3.g) a x c = (58 64 / 139 154)
+[OK]    (3.f) (3 x 2) x (2 x 3) donne une matrice 3 x 3
+[OK]    a et c n'ont pas ete modifiees
+[OK]    (3.g) 2 x 10^10 depasse INT_MAX : MAT_ERR_DEPASSEMENT
+=== Exercice 3 : cas particuliers ===
+[OK]    resultat = entree refuse, a reste intacte
+[OK]    (3.f) echec d'allocation : MAT_ERR_ALLOCATION, r vide
+
+Bilan : 14 / 14 verifications reussies.
+Pensez a verifier l'absence de fuite : valgrind --leak-check=full ./test_ex3
+==1514== 
+==1514== HEAP SUMMARY:
+==1514==     in use at exit: 0 bytes in 0 blocks
+==1514==   total heap usage: 37 allocs, 37 frees, 1,412 bytes allocated
+==1514== 
+==1514== All heap blocks were freed -- no leaks are possible
+==1514== 
+==1514== For lists of detected and suppressed errors, rerun with: -s
+==1514== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
+```
+#### Q5.0(question dans calcul.c)
+*Un résultat calculé en long long tient-il dans un int ? *
+#### Q5.1
+*Le paramètre const Matrice *a empêche-t-il d’écrire a->coef[0][0] = 7; ? Que protège
+ exactement ce const ? Que faudrait-il changer pour que le compilateur refuse cette affectation ?
+#### Q5.2
+*Pourquoi refuse-t-on l’appel mat_additionner(&a, &b, &a) alors que, mathématiquement,
+a ←a+baunsens?Quesepasserait-il avec notre implémentation si on l’acceptait ?
+#### Q5.3
+ *Combien de multiplications d’entiers effectue mat_multiplier pour des matrices n × p et
+ p ×q ?Combien pour deux matrices 1000×1000 ?
+#### Q5.4
+ *Pourquoi ne suffit-il pas de calculer int s = a + b; puis de tester s < a pour détecter un
+ dépassement 
