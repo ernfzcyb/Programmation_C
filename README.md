@@ -7,7 +7,7 @@
 
 - *1.a :* Dans le fichier matrice.c nous avons ajouté les lignes :
 
-```bash
+```c
     case MAT_ERR_DIMENSIONS:  return "dimensions incompatibles";
     case MAT_ERR_DEPASSEMENT: return "dépassement de la mémoire";
 ```
@@ -244,16 +244,30 @@ Pensez a verifier l'absence de fuite : valgrind --leak-check=full ./test_ex2
 
 #### Q4.1 
 *Pourquoi mat_lire remplit-elle d'abord une matrice locale avant de l'affecter à* *res ?*
+**Reponse :**
+Pour garantir qu'en cas d'echec *res reste dans l'état vide. Avec tmp, on peut la détruire proprement mat_detruire(&tmp) en cas d'erreur, et on n'affecte *res = tmp qu'une fois que tout a réussi. On evite alors des erreur comme une erreur au milieu du fichier ou un oublie de liberation 
 
 #### Q4.2
  *La lecture vérifie-t-elle que chaque ligne de la matrice est sur sa propre ligne de texte ? Est-ce gênant ? Justifiez le principe « tolérant en lecture, strict en écriture ».*
+**Reponse :**
+Non lire_entier utilise fscanf("%31s") qui lit des chaines de caratère de longeur maximale de 31 séparé par des espaces et les tabulation \n 
+Donc il ne vérifie pas chaque ligne 
+
+Ce n'est pas génant car on vérifie les mots en entrée,
+
+Celon le principe de tolérant en lecture, strict en écriture : On veux un format canonique définie en écriture et on accepte des variations sans importance en lecture car la tolérance ne porte que sur la forme et non le contenue ce qui permet une meilleur flexibilité en lecture mais une rigeure en écriture ce qui rend le code plus robuste.
 
 #### Q4.3
 *Après l'appel mat_lire(f, &m), le flux f est positionné après le dernier coefficient. Comment exploiter cette propriété pour stocker deux matrices dans un même fichier ?*
+**Reponse :**
+
 
 #### Q4.4 
 *Pourquoi mat_ecrire appelle-t-elle fflush avant de renvoyer MAT_OK ? Cela dispense-t-il
 l'appelant de tester fclose ?*
+**Reponse :**
+
+
 #### **exercice 3**
 - *3.a :*
 ```bash
