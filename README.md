@@ -370,6 +370,35 @@ a ←a+baunsens?Quesepasserait-il avec notre implémentation si on l’acceptait
  *Pourquoi ne suffit-il pas de calculer int s = a + b; puis de tester s < a pour détecter un
  dépassement 
 
+- *4.a :*
+```bash
+    mat_afficher("A",&a);
+    mat_afficher("B",&b);
+```
+- *4.b :*
+```bash
+    if(err !=MAT_OK){
+        fprintf(stderr,"Erreur : calcule impossible : %s", mat_message_erreur(err));
+        fprintf(stderr,"(A : %d x %d, B: %d x %d)\n", a.nb_lignes, a.nb_colonnes,b.nb_lignes,b.nb_colonnes);
+        goto nettoyage;
+    }
+```
+- *4.c :*
+```bash
+    addition ? mat_afficher("R = A + B",&r) : mat_afficher("R = A x B",&r);
+```
+- *4.d :*
+```bash
+    printf("Resultat enregistré dans \" %s\".\n",argv[4]);
+    statut = EXIT_SUCCESS;
+```
+
+
+
+
+
+
+
 valgrind du 6.2
 ```bash
 ==1117== Memcheck, a memory error detector
