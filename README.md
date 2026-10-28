@@ -244,12 +244,16 @@ Pensez a verifier l'absence de fuite : valgrind --leak-check=full ./test_ex2
 
 #### Q4.1 
 *Pourquoi mat_lire remplit-elle d'abord une matrice locale avant de l'affecter à* *res ?*
+
 **Reponse :**
+
 Pour garantir qu'en cas d'echec *res reste dans l'état vide. Avec tmp, on peut la détruire proprement mat_detruire(&tmp) en cas d'erreur, et on n'affecte *res = tmp qu'une fois que tout a réussi. On evite alors des erreur comme une erreur au milieu du fichier ou un oublie de liberation 
 
 #### Q4.2
  *La lecture vérifie-t-elle que chaque ligne de la matrice est sur sa propre ligne de texte ? Est-ce gênant ? Justifiez le principe « tolérant en lecture, strict en écriture ».*
+
 **Reponse :**
+
 Non lire_entier utilise fscanf("%31s") qui lit des chaines de caratère de longeur maximale de 31 séparé par des espaces et les tabulation \n 
 Donc il ne vérifie pas chaque ligne 
 
@@ -259,13 +263,17 @@ Celon le principe de tolérant en lecture, strict en écriture : On veux un form
 
 #### Q4.3
 *Après l'appel mat_lire(f, &m), le flux f est positionné après le dernier coefficient. Comment exploiter cette propriété pour stocker deux matrices dans un même fichier ?*
+
 **Reponse :**
+
 mat_lire déplace le curseur du fichier exactement apres les dimentions et les coefficients le flux est positionné apres le dernier coefficient.Donc en appelant la fonction une nouvelle fois sur le meme FILE* il continura a lire si une autre matrice ce trouve apres.
 Pour utiliser mat_ecrire sur le meme FILE * le principe est le meme écrire sur le meme fichier car le flux est bien positioné a la fin de la première execution  
 
 #### Q4.4 
 *Pourquoi mat_ecrire appelle-t-elle fflush avant de renvoyer MAT_OK ? Cela dispense-t-il
+
 l'appelant de tester fclose ?*
+
 **Reponse :**
 fflush va forcer l'écriture du tampon, fprintf et fputc écrive sur des buffer avant d'enregistré en mémoire on pourrais avoir une erreur entre l'écriture sur le disque et le buffer. Donc fflush permet de ce premunir de cette erreur afin d'etre sur qu'on a pas l'état MAT_ERR_ECRITURE a la place de MAT_OK. Enfin ça ne dispance pas de faire un fclose. fclose ferme le flux alors que fflush force juste l'écriture
 
