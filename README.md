@@ -14,26 +14,26 @@
 avec description du cas de dépassement de mémoire
 
 - *1.b :* Nous avons ajouter un return afin de renvoyer le resultat de toute les condition
-````bash
+````c
               return m != NULL &&
               m->coef != NULL &&   
               m->nb_lignes >= 1 && m->nb_lignes <= MAT_DIM_MAX &&
               m->nb_colonnes >= 1 && m->nb_colonnes <= MAT_DIM_MAX; 
 ````
 Nous avons mis en commentaire les ligne provisoire :
-```bash
+```c
     (void)m;      
     return 0;
 ````
 - *1.c :*
-```bash
+```c
     if ((((nb_lignes < 1) || (nb_lignes > MAT_DIM_MAX)))||(((nb_colonnes < 1) || (nb_colonnes > MAT_DIM_MAX)))){
         return MAT_ERR_ARGUMENT;
     }
 ```
 
 - *1.d :*
-```bash
+```c
         for (int i = 0; i < nb_lignes; i++) {
             coef[i] = mat_calloc((size_t)nb_colonnes,sizeof*coef[i]);    // nb_colonnes entiers
             if (coef[i] == NULL) {
@@ -45,19 +45,19 @@ Nous avons mis en commentaire les ligne provisoire :
         }  
 ```
 - *1.e :*
-```bash
+```c
         res->coef = coef;
         res->nb_lignes = nb_lignes;
         res->nb_colonnes = nb_colonnes;
         return MAT_OK;
 ```
 Nous avons commenté ces lignes provisoire :
-```bash    
+```c    
     free(coef);                  
     return MAT_ERR_LECTURE;
 ```
 - *1.f:*
-```bash
+```c
     if (m->coef != NULL) 
     {
         for (int i = 0; i < m->nb_lignes; i++) {
@@ -139,7 +139,7 @@ Dans le but de faire un code robuste on affecte avant toute action une matrice v
 
 #### **exercice 2**
 - *2.a :*
-```bash
+```c
     for (int i = 0; i < m->nb_lignes; i++) {
      for (int j = 0; j < m->nb_colonnes; j++){
       printf(" %8d", m->coef[i][j]);
@@ -149,7 +149,7 @@ Dans le but de faire un code robuste on affecte avant toute action une matrice v
 
 ```
 - *2.b :*
-```bash
+```c
     for (int i = 0; i < m->nb_lignes; i++) {
         for (int j = 0; j < m->nb_colonnes; j++){
       if (fprintf(f, j==0 ? "%d" : " %d", m->coef[i][j]) < 0){
@@ -162,20 +162,20 @@ Dans le but de faire un code robuste on affecte avant toute action une matrice v
 }
 ```
 - *2.c :*
-```bash
+```c
      if(nb_lignes<1 || nb_lignes > MAT_DIM_MAX || nb_colonnes<1 || nb_colonnes > MAT_DIM_MAX) {
         return MAT_ERR_FORMAT;
     }
 ```
 - *2.d :*
-```bash
+```c
    Matrice tmp;
    err = mat_allouer(&tmp, nb_lignes, nb_colonnes);
    if (err != MAT_OK) 
    return err;
 ```
 - *2.e :*
-```bash
+```c
          for (int i = 0; i < nb_lignes; i++) {
      for (int j = 0; j < nb_colonnes; j++){
             err=lire_entier(f, &tmp.coef[i][j]);
@@ -187,12 +187,12 @@ Dans le but de faire un code robuste on affecte avant toute action une matrice v
     } 
 ```
 - *2.f :*
-```bash
+```c
       *res = tmp; 
       return MAT_OK; 
 ```
 Nous avons suprimé 
-```bash
+```c
 return MAT_ERR_LECTURE;
 ```
 
