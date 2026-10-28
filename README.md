@@ -67,7 +67,7 @@ Nous avons commenté ces lignes provisoire :
     } 
 ```
 retour de test_ex1 :
-```
+```bash
 ==6321== Memcheck, a memory error detector
 ==6321== Copyright (C) 2002-2024, and GNU GPL'd, by Julian Seward et al.
 ==6321== Using Valgrind-3.26.0 and LibVEX; rerun with -h for copyright info
@@ -260,12 +260,14 @@ Celon le principe de tolérant en lecture, strict en écriture : On veux un form
 #### Q4.3
 *Après l'appel mat_lire(f, &m), le flux f est positionné après le dernier coefficient. Comment exploiter cette propriété pour stocker deux matrices dans un même fichier ?*
 **Reponse :**
-
+mat_lire déplace le curseur du fichier exactement apres les dimentions et les coefficients le flux est positionné apres le dernier coefficient.Donc en appelant la fonction une nouvelle fois sur le meme FILE* il continura a lire si une autre matrice ce trouve apres.
+Pour utiliser mat_ecrire sur le meme FILE * le principe est le meme écrire sur le meme fichier car le flux est bien positioné a la fin de la première execution  
 
 #### Q4.4 
 *Pourquoi mat_ecrire appelle-t-elle fflush avant de renvoyer MAT_OK ? Cela dispense-t-il
 l'appelant de tester fclose ?*
 **Reponse :**
+fflush va forcer l'écriture du tampon, fprintf et fputc écrive sur des buffer avant d'enregistré en mémoire on pourrais avoir une erreur entre l'écriture sur le disque et le buffer. Donc fflush permet de ce premunir de cette erreur afin d'etre sur qu'on a pas l'état MAT_ERR_ECRITURE a la place de MAT_OK. Enfin ça ne dispance pas de faire un fclose. fclose ferme le flux alors que fflush force juste l'écriture
 
 
 #### **exercice 3**
@@ -343,7 +345,7 @@ Test Final  avec Valgrind
 [OK]    (3.a) (2 x 3) + (3 x 2) : MAT_ERR_DIMENSIONS
 [OK]    (3.d) (2 x 3) + (2 x 3) : MAT_OK
 [OK]    (3.c) a + b est correct
-[OK]    a et b n'ont pas ete modifiees
+[OK]    a et b n ont pas ete modifiees
 [OK]    (3.b) le resultat possede sa propre memoire
 [OK]    (3.c) INT_MAX + 1 : MAT_ERR_DEPASSEMENT
 === Exercice 3 : multiplication ===
@@ -351,14 +353,14 @@ Test Final  avec Valgrind
 [OK]    (3.h) (2 x 3) x (3 x 2) : MAT_OK
 [OK]    (3.g) a x c = (58 64 / 139 154)
 [OK]    (3.f) (3 x 2) x (2 x 3) donne une matrice 3 x 3
-[OK]    a et c n'ont pas ete modifiees
+[OK]    a et c nont pas ete modifiees
 [OK]    (3.g) 2 x 10^10 depasse INT_MAX : MAT_ERR_DEPASSEMENT
 === Exercice 3 : cas particuliers ===
 [OK]    resultat = entree refuse, a reste intacte
-[OK]    (3.f) echec d'allocation : MAT_ERR_ALLOCATION, r vide
+[OK]    (3.f) echec d allocation : MAT_ERR_ALLOCATION, r vide
 
 Bilan : 14 / 14 verifications reussies.
-Pensez a verifier l'absence de fuite : valgrind --leak-check=full ./test_ex3
+Pensez a verifier l absence de fuite : valgrind --leak-check=full ./test_ex3
 ==1514== 
 ==1514== HEAP SUMMARY:
 ==1514==     in use at exit: 0 bytes in 0 blocks
@@ -385,12 +387,12 @@ a ←a+baunsens?Quesepasserait-il avec notre implémentation si on l’acceptait
  dépassement 
 
 - *4.a :*
-```bash
+```c
     mat_afficher("A",&a);
     mat_afficher("B",&b);
 ```
 - *4.b :*
-```bash
+```c
     if(err !=MAT_OK){
         fprintf(stderr,"Erreur : calcule impossible : %s", mat_message_erreur(err));
         fprintf(stderr,"(A : %d x %d, B: %d x %d)\n", a.nb_lignes, a.nb_colonnes,b.nb_lignes,b.nb_colonnes);
@@ -398,11 +400,11 @@ a ←a+baunsens?Quesepasserait-il avec notre implémentation si on l’acceptait
     }
 ```
 - *4.c :*
-```bash
+```c
     addition ? mat_afficher("R = A + B",&r) : mat_afficher("R = A x B",&r);
 ```
 - *4.d :*
-```bash
+```c
     printf("Resultat enregistré dans \" %s\".\n",argv[4]);
     statut = EXIT_SUCCESS;
 ```
