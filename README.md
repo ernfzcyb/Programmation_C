@@ -270,13 +270,13 @@ l'appelant de tester fclose ?*
 
 #### **exercice 3**
 - *3.a :*
-```bash
+```c
     if ((((nb_lignes < 1) || (nb_lignes > MAT_DIM_MAX)))||(((nb_colonnes < 1) || (nb_colonnes > MAT_DIM_MAX)))){
         return MAT_ERR_ARGUMENT;
     }
 ```
 - *3.b :*
-```bash
+```c
     Matrice r = MATRICE_VIDE;
     err = mat_allouer(&r,a->nb_lignes, a->nb_colonnes);
     if (err != MAT_OK) 
@@ -284,11 +284,11 @@ l'appelant de tester fclose ?*
     
 ```
 - *3.c :*
-```bash
+```c
     long long s = (long long)a->coef[i][j] + b->coef[i][j];
 ```
 - *3.d :*
-```bash
+```c
     *res = r; 
     return MAT_OK; 
 ```
@@ -303,20 +303,20 @@ l'appelant de tester fclose ?*
 ```
 On a bien toute la partie addition qui est valide
 - *3.e :*
-```bash
+```c
 if (a->nb_colonnes != b->nb_lignes){
         return MAT_ERR_DIMENSIONS;
     }
 ```
 - *3.f :*
-```bash
+```c
     Matrice r = MATRICE_VIDE;
     err = mat_allouer(&r,a->nb_lignes, b->nb_colonnes);
     if (err != MAT_OK) 
      return err;
 ```
 - *3.g :*
-```bash
+```c
 for (int k = 0; k < a->nb_colonnes; k++) {
                 long long p = (long long)a->coef[i][k] * b->coef[k][j];
                 if ((p > 0 && s > LLONG_MAX - p)
@@ -328,7 +328,7 @@ for (int k = 0; k < a->nb_colonnes; k++) {
                }            
 ```
 - *3.h :*
-```bash
+```c
     *res = r; 
     return MAT_OK;
 ```
