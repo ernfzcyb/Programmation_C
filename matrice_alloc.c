@@ -58,7 +58,6 @@ MatErreur mat_allouer(Matrice *res, int nb_lignes, int nb_colonnes)
             }
         }                                                             
 
-    (void)nb_colonnes;   /* ligne provisoire : à supprimer en (1.d) */
 
     /* (1.e) À COMPLÉTER : maintenant que tout a réussi, remplir *res
      *       (trois affectations : coef, nb_lignes, nb_colonnes)

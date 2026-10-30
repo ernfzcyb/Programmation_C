@@ -9,7 +9,7 @@
 
 ```c
     case MAT_ERR_DIMENSIONS:  return "dimensions incompatibles";
-    case MAT_ERR_DEPASSEMENT: return "dépassement de la mémoire";
+    case MAT_ERR_DEPASSEMENT: return "hors de l'intervale des int";
 ```
 avec description du cas de dépassement de mémoire
 
@@ -109,21 +109,20 @@ Pensez a verifier l'absence de fuite : valgrind --leak-check=full ./test_ex1
 *Pourquoi mat_detruire prend-elle un Matrice * et non un Matrice ? Que se passerait-il,pour l'appelant, avec un passage par valeur ?*
 
 **Reponse :**
-mat_detruire est une fonction qui sert a libéré l'emplacement mémoire d'une matrice vide qui est formé de tableau dynamique. En prenant juste Matrice on travailleurais une une variable locale qui ce qui ne changerait pas la matrice original qu'on cherche a libéré
+mat_detruire est une fonction qui sert a libéré l'emplacement mémoire d'une matrice vide qui est formé de tableau dynamique. En prenant juste Matrice on travailleurais une une variable locale qui ce qui ne changerait pas la matrice original qu'on cherche a libéré. Par valeur, l'appelant garde un coef qui pointe vers de la memoire liberer
 
 #### Q3.2 
 *Combien d'appels à calloc et à free faut-il pour une matrice n x p ? Si la k-ième allocation échoue, combien de libérations mat_allouer doit-elle effectuer ?*
 
 **Reponse :** On doit faire autant de free que de calloc soit n + 1 (1 pour le tableau de taille p qui regroupe les autre tableu et n autre tableau a défini)
-Dans le cas l'allocation échoue(coef[i] == NULL)  mat_allouer doit free i+1 fois
+Dans le cas l'allocation échoue(coef[i] == NULL)  mat_allouer doit free i-1 fois
 
 #### Q3.3 
 *Appeler deux fois free sur la même adresse est un comportement indéfini. Pourquoi appeler
 deux fois mat_detruire sur la même matrice est-il sans danger ? Est-ce encore vrai si l'on a fait une copie Matrice b = a; puis appele mat_detruire (&a) et mat_detruire (&b) ?*
 
 **Reponse :**
-La fonction mat_detruire prend un pointeur versune structure. En premier il teste si ce pointeur n'est pas null. Puis vérifie si la matrice est vide. Une fois fait l'état du pointeur est alors remis dans un etat vide.
-Dans le cas d'un second appel la premier vérification permet de ce prémunire erreur.
+La fonction mat_detruire prend un pointeur vers une structure. En premier il teste si ce pointeur n'est pas null. Puis vérifie si la matrice est vide. Une fois fait l'état du pointeur est alors remis dans un etat vide. Dans le cas d'un second appel m est dans l'etat vide donc pas d'erreur.
 
 Matrice b = a
 Le pointeur interne b.coef pointe vers exactement la meme zone memoire que
@@ -281,8 +280,8 @@ fflush va forcer l'écriture du tampon, fprintf et fputc écrive sur des buffer 
 #### **exercice 3**
 - *3.a :*
 ```c
-    if ((((nb_lignes < 1) || (nb_lignes > MAT_DIM_MAX)))||(((nb_colonnes < 1) || (nb_colonnes > MAT_DIM_MAX)))){
-        return MAT_ERR_ARGUMENT;
+    if ((a->nb_lignes!=b->nb_lignes) || (a->nb_colonnes!=b->nb_colonnes)){
+        return MAT_ERR_DIMENSIONS;
     }
 ```
 - *3.b :*

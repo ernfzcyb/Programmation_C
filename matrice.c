@@ -16,7 +16,7 @@ const char *mat_message_erreur(MatErreur code)
     case MAT_ERR_FORMAT:      return "fichier mal formé";
     case MAT_ERR_ECRITURE:    return "erreur d'écriture du fichier";
     case MAT_ERR_DIMENSIONS:  return "dimensions incompatibles";
-    case MAT_ERR_DEPASSEMENT: return "dépassement de la mémoire";
+    case MAT_ERR_DEPASSEMENT: return "hors de l'intervale des int";
 
     /* (1.a) À COMPLÉTER : les cas MAT_ERR_DIMENSIONS et
      *       MAT_ERR_DEPASSEMENT, sur le même modèle que ci-dessus. */
