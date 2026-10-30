@@ -504,22 +504,21 @@ $ echo $?
 
 Test final avec Valgrind (cas réussi) :
 ```bash
-A (4 x 3) :
-       25       48       84
-       15       33       11
-       45       88       10
-        0       12       -5
-B (4 x 3) :
-        1        2        3
-        4        5        6
-        7        8        9
-       10       11       12
-R = A + B (4 x 3) :
-       26       50       87
-       19       38       17
-       52       96       19
-       10       23        7
-Resultat enregistré dans " R.txt".
+==197== Memcheck, a memory error detector
+==197== Copyright (C) 2002-2022, and GNU GPL'd, by Julian Seward et al.
+==197== Using Valgrind-3.22.0 and LibVEX; rerun with -h for copyright info
+==197== Command: ./demo_matrices add donnees/A.txt donnees/B.txt R.txt
+==197== Parent PID: 196
+==197== 
+==197== 
+==197== HEAP SUMMARY:
+==197==     in use at exit: 0 bytes in 0 blocks
+==197==   total heap usage: 22 allocs, 22 frees, 18,040 bytes allocated
+==197== 
+==197== All heap blocks were freed -- no leaks are possible
+==197== 
+==197== For lists of detected and suppressed errors, rerun with: -s
+==197== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
 ```
 
 Test avec Valgrind (cas d'erreur : dimensions incompatibles) :
