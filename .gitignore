@@ -1,0 +1,20 @@
+# Fichiers objets et executables 
+*.o
+*.exe
+test_ex1
+test_ex2
+test_ex3
+demo_matrices
+
+# Fichiers produits par les programmes
+R.txt
+R2.txt
+resultat*.txt
+test_ex2_sortie.txt
+
+# Dossiers d editeur / systeme
+.vscode/
+.idea/
+__MACOSX/
+.DS_Store
+Thumbs.db

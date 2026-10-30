@@ -381,19 +381,37 @@ Pensez a verifier l absence de fuite : valgrind --leak-check=full ./test_ex3
 ```
 #### Q5.0(question dans calcul.c)
 *Un résultat calculé en long long tient-il dans un int ? *
+
+**Reponse :**
+Pas toujours. `tient_dans_int` vérifie que la valeur est entre `INT_MIN` et `INT_MAX` ; sinon on détruit `r` et on renvoie `MAT_ERR_DEPASSEMENT` au lieu de tronquer silencieusement la valeur avec le cast `(int)s`.
 #### Q5.1
 *Le paramètre const Matrice *a empêche-t-il d’écrire a->coef[0][0] = 7; ? Que protège
  exactement ce const ? Que faudrait-il changer pour que le compilateur refuse cette affectation ?
+
+**Reponse :**
+Non. Avec `const Matrice *a`, c'est la **structure** qui est constante : on ne peut pas écrire `a->nb_lignes = 0;` ni `a->coef = NULL;`. Mais le champ `coef` est de type `int **` : `a->coef` est un pointeur constant vers des `int *` non constants, donc `a->coef[0][0]` est un `int` modifiable et `a->coef[0][0] = 7;` compile sans avertissement. Le `const` protège donc seulement les trois champs de la structure, pas les coefficients rangés dans le tas.
+Pour que le compilateur refuse cette affectation, il faudrait que le type des coefficients soit constant, par exemple un champ `const int *const *coef` (ou une structure « vue en lecture » séparée pour les entrées). Comme `matrice.h` est imposé, chez nous la non-modification des entrées est une règle (R4) que nous respectons et que `test_ex3` vérifie (« a et b n'ont pas été modifiées »).
 #### Q5.2
 *Pourquoi refuse-t-on l’appel mat_additionner(&a, &b, &a) alors que, mathématiquement,
 a ←a+baunsens?Quesepasserait-il avec notre implémentation si on l’acceptait ?
+
+**Reponse :**
+Parce que `res` est un paramètre de **sortie** (R5) : la fonction commence par l'écraser. Dans notre code, `verifier_parametres` fait `*res = MATRICE_VIDE;` ; si `res == &a`, la matrice `a` serait vidée **avant** d'être lue : son tableau `coef` serait perdu (fuite de toute la mémoire de `a`) et `mat_est_valide(a)` renverrait 0. Même sans cette ligne, on finirait par `*res = r;`, qui remplace `a.coef` par celui de `r` sans libérer l'ancien : fuite. Pour la multiplication, calculer « sur place » serait de toute façon faux, car les coefficients de `a` déjà écrasés sont encore nécessaires pour les cases suivantes. C'est pourquoi `verifier_parametres` renvoie `MAT_ERR_ARGUMENT` si `res == a || res == b` **avant** de toucher à `*res` (test « resultat = entree refuse, a reste intacte »). Pour faire `a <- a + b`, l'appelant calcule dans `r`, puis `mat_detruire(&a); a = r;`.
 #### Q5.3
  *Combien de multiplications d’entiers effectue mat_multiplier pour des matrices n × p et
  p ×q ?Combien pour deux matrices 1000×1000 ?
+
+**Reponse :**
+La boucle `i` fait `n` tours, la boucle `j` en fait `q` et la boucle `k` en fait `p` ; il y a une multiplication `(long long)a->coef[i][k] * b->coef[k][j]` par tour de `k`, donc **n x p x q** multiplications (et autant d'additions). Pour deux matrices 1000 x 1000 : 1000 x 1000 x 1000 = **10^9 multiplications** (un milliard), soit de l'ordre de la seconde, contre seulement 10^6 additions pour `mat_additionner`. Le coût croît comme le cube de la taille.
 #### Q5.4
  *Pourquoi ne suffit-il pas de calculer int s = a + b; puis de tester s < a pour détecter un
  dépassement 
 
+**Reponse :**
+En C, le dépassement d'un `int` **signé** est un comportement indéfini : une fois `int s = a + b;` exécuté, il est trop tard, le programme n'a plus aucune garantie. En pratique, le compilateur a le droit de supposer qu'il n'y a jamais de dépassement et peut supprimer le test `s < a` (avec `b > 0`, il « sait » que `a + b < a` est impossible) dès que l'on optimise. De plus le test est incomplet : si `b` est négatif, `s < a` est normal et un dépassement vers le bas ne serait pas vu.
+Notre code évite le problème en calculant **avant** de déborder : dans l'addition, `(long long)a->coef[i][j] + b->coef[i][j]` tient toujours dans un `long long` (au plus 2^32), puis `tient_dans_int` vérifie le résultat. Dans la multiplication, chaque produit tient dans un `long long` (au plus 2^62), et on teste `s > LLONG_MAX - p` (ou `s < LLONG_MIN - p`) avant de faire `s += p`.
+
+#### **exercice 4**
 - *4.a :*
 ```c
     mat_afficher("A",&a);
@@ -416,6 +434,25 @@ a ←a+baunsens?Quesepasserait-il avec notre implémentation si on l’acceptait
     printf("Resultat enregistré dans \" %s\".\n",argv[4]);
     statut = EXIT_SUCCESS;
 ```
+
+
+#### Q6.1
+*Pourquoi le message d'erreur est-il affiché par main.c (ou ses fonctions static) et non par mat_lire ?*
+
+**Reponse :**
+Une bibliothèque ne sait pas dans quel programme elle sera utilisée. Un programme graphique n'a pas de terminal : un `fprintf(stderr, ...)` dans `mat_lire` serait invisible, alors que le programme voudrait afficher une boîte de dialogue, traduire le message, ou réessayer sans rien dire. De plus `mat_lire` ne reçoit qu'un `FILE *` : elle ne connaît même pas le nom du fichier. C'est `charger` qui le connaît et peut écrire un message précis : `Erreur : lecture de "donnees/invalide.txt" : fichier mal formé`. La bibliothèque renvoie donc seulement un code, et l'appelant choisit comment le présenter (avec `mat_message_erreur`).
+
+#### Q6.2
+*Pourquoi le résultat de fclose est-il testé dans sauvegarder mais pas dans charger ?*
+
+**Reponse :**
+En écriture, `fprintf` écrit d'abord dans un tampon en mémoire ; les dernières données peuvent n'être envoyées au disque qu'au moment de `fclose` (disque plein, quota, clé retirée, lecteur réseau). Si `fclose` échoue, le fichier `R.txt` peut être incomplet : il faut le signaler (`MAT_ERR_ECRITURE`) et terminer avec un code d'échec. En lecture, la matrice a déjà été entièrement lue et vérifiée par `mat_lire` au moment de `fclose` : un échec de la fermeture ne fait perdre aucune donnée et il n'y a rien d'utile à faire, on garde donc la matrice.
+
+#### Q6.3
+*Dans le scénario 8, le calcul a réussi mais l'enregistrement a échoué. Combien de matrices faut-il libérer ?*
+
+**Reponse :**
+**trois** : `a` et `b` (lues) et `r` (le résultat, dont `main` est devenu propriétaire quand `mat_additionner` a renvoyé `MAT_OK`, règle R2). Quand `sauvegarder` échoue, on fait `goto nettoyage;` et les trois `mat_detruire` sont exécutés ; `statut` est resté à `EXIT_FAILURE`. Vérifié sous valgrind (`./demo_matrices add donnees/A.txt donnees/B.txt dossier_inexistant/R.txt`) : `total heap usage: 21 allocs, 21 frees`, `All heap blocks were freed -- no leaks are possible`, code de sortie 1. Les 15 blocs des trois matrices 4 x 3 (1 + 4 chacune) sont bien libérés, les autres allocations étant celles de la bibliothèque standard (tampons des `FILE`).
 
 
 
