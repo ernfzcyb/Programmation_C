@@ -435,6 +435,111 @@ Notre code évite le problème en calculant **avant** de déborder : dans l'addi
     statut = EXIT_SUCCESS;
 ```
 
+Test de l'exercice 4 (scénarios du sujet) :
+```bash
+$ ./demo_matrices add donnees/A.txt donnees/B.txt R.txt
+A (4 x 3) :
+       25       48       84
+       15       33       11
+       45       88       10
+        0       12       -5
+B (4 x 3) :
+        1        2        3
+        4        5        6
+        7        8        9
+       10       11       12
+R = A + B (4 x 3) :
+       26       50       87
+       19       38       17
+       52       96       19
+       10       23        7
+Resultat enregistré dans " R.txt".
+$ echo $?
+0
+$ cat R.txt
+4 3
+26 50 87
+19 38 17
+52 96 19
+10 23 7
+
+$ ./demo_matrices mul donnees/A.txt donnees/C.txt R.txt
+A (4 x 3) :
+       25       48       84
+       15       33       11
+       45       88       10
+        0       12       -5
+B (3 x 2) :
+        1        0
+        0        1
+        2       -1
+R = A x B (4 x 2) :
+      193      -36
+       37       22
+       65       78
+      -10       17
+Resultat enregistré dans " R.txt".
+$ echo $?
+0
+
+$ ./demo_matrices add donnees/A.txt donnees/C.txt R.txt
+A (4 x 3) :
+       25       48       84
+       15       33       11
+       45       88       10
+        0       12       -5
+B (3 x 2) :
+        1        0
+        0        1
+        2       -1
+Erreur : calcule impossible : dimensions incompatibles(A : 4 x 3, B: 3 x 2)
+$ echo $?
+1
+
+$ ./demo_matrices add donnees/invalide.txt donnees/B.txt R.txt
+Erreur : lecture de "donnees/invalide.txt" : fichier mal formé
+$ echo $?
+1
+```
+
+Test final avec Valgrind (cas réussi) :
+```bash
+A (4 x 3) :
+       25       48       84
+       15       33       11
+       45       88       10
+        0       12       -5
+B (4 x 3) :
+        1        2        3
+        4        5        6
+        7        8        9
+       10       11       12
+R = A + B (4 x 3) :
+       26       50       87
+       19       38       17
+       52       96       19
+       10       23        7
+Resultat enregistré dans " R.txt".
+```
+
+Test avec Valgrind (cas d'erreur : dimensions incompatibles) :
+```bash
+==187== Memcheck, a memory error detector
+==187== Copyright (C) 2002-2022, and GNU GPL'd, by Julian Seward et al.
+==187== Using Valgrind-3.22.0 and LibVEX; rerun with -h for copyright info
+==187== Command: ./demo_matrices add donnees/A.txt donnees/C.txt R.txt
+==187== 
+==187== 
+==187== HEAP SUMMARY:
+==187==     in use at exit: 0 bytes in 0 blocks
+==187==   total heap usage: 14 allocs, 14 frees, 13,360 bytes allocated
+==187== 
+==187== All heap blocks were freed -- no leaks are possible
+==187== 
+==187== For lists of detected and suppressed errors, rerun with: -s
+==187== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
+```
+
 
 #### Q6.1
 *Pourquoi le message d'erreur est-il affiché par main.c (ou ses fonctions static) et non par mat_lire ?*
