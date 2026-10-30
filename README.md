@@ -420,8 +420,8 @@ Notre code évite le problème en calculant **avant** de déborder : dans l'addi
 - *4.b :*
 ```c
     if(err !=MAT_OK){
-        fprintf(stderr,"Erreur : calcule impossible : %s", mat_message_erreur(err));
-        fprintf(stderr,"(A : %d x %d, B: %d x %d)\n", a.nb_lignes, a.nb_colonnes,b.nb_lignes,b.nb_colonnes);
+        fprintf(stderr,"Erreur : calcul impossible : %s ", mat_message_erreur(err));
+        fprintf(stderr,"(A : %d x %d, B : %d x %d)\n", a.nb_lignes, a.nb_colonnes,b.nb_lignes,b.nb_colonnes);
         goto nettoyage;
     }
 ```
@@ -431,7 +431,7 @@ Notre code évite le problème en calculant **avant** de déborder : dans l'addi
 ```
 - *4.d :*
 ```c
-    printf("Resultat enregistré dans \" %s\".\n",argv[4]);
+    printf("Résultat enregistré dans \"%s\".\n",argv[4]);
     statut = EXIT_SUCCESS;
 ```
 
@@ -453,7 +453,7 @@ R = A + B (4 x 3) :
        19       38       17
        52       96       19
        10       23        7
-Resultat enregistré dans " R.txt".
+Résultat enregistré dans "R.txt".
 $ echo $?
 0
 $ cat R.txt
@@ -478,7 +478,7 @@ R = A x B (4 x 2) :
        37       22
        65       78
       -10       17
-Resultat enregistré dans " R.txt".
+Résultat enregistré dans "R.txt".
 $ echo $?
 0
 
@@ -492,7 +492,7 @@ B (3 x 2) :
         1        0
         0        1
         2       -1
-Erreur : calcule impossible : dimensions incompatibles(A : 4 x 3, B: 3 x 2)
+Erreur : calcul impossible : dimensions incompatibles (A : 4 x 3, B : 3 x 2)
 $ echo $?
 1
 
@@ -504,39 +504,40 @@ $ echo $?
 
 Test final avec Valgrind (cas réussi) :
 ```bash
-==197== Memcheck, a memory error detector
-==197== Copyright (C) 2002-2022, and GNU GPL'd, by Julian Seward et al.
-==197== Using Valgrind-3.22.0 and LibVEX; rerun with -h for copyright info
-==197== Command: ./demo_matrices add donnees/A.txt donnees/B.txt R.txt
-==197== Parent PID: 196
-==197== 
-==197== 
-==197== HEAP SUMMARY:
-==197==     in use at exit: 0 bytes in 0 blocks
-==197==   total heap usage: 22 allocs, 22 frees, 18,040 bytes allocated
-==197== 
-==197== All heap blocks were freed -- no leaks are possible
-==197== 
-==197== For lists of detected and suppressed errors, rerun with: -s
-==197== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
+==475== Memcheck, a memory error detector
+==475== Copyright (C) 2002-2022, and GNU GPL'd, by Julian Seward et al.
+==475== Using Valgrind-3.22.0 and LibVEX; rerun with -h for copyright info
+==475== Command: ./demo_matrices add donnees/A.txt donnees/B.txt R.txt
+==475== Parent PID: 391
+==475== 
+==475== 
+==475== HEAP SUMMARY:
+==475==     in use at exit: 0 bytes in 0 blocks
+==475==   total heap usage: 22 allocs, 22 frees, 18,040 bytes allocated
+==475== 
+==475== All heap blocks were freed -- no leaks are possible
+==475== 
+==475== For lists of detected and suppressed errors, rerun with: -s
+==475== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
 ```
 
 Test avec Valgrind (cas d'erreur : dimensions incompatibles) :
 ```bash
-==187== Memcheck, a memory error detector
-==187== Copyright (C) 2002-2022, and GNU GPL'd, by Julian Seward et al.
-==187== Using Valgrind-3.22.0 and LibVEX; rerun with -h for copyright info
-==187== Command: ./demo_matrices add donnees/A.txt donnees/C.txt R.txt
-==187== 
-==187== 
-==187== HEAP SUMMARY:
-==187==     in use at exit: 0 bytes in 0 blocks
-==187==   total heap usage: 14 allocs, 14 frees, 13,360 bytes allocated
-==187== 
-==187== All heap blocks were freed -- no leaks are possible
-==187== 
-==187== For lists of detected and suppressed errors, rerun with: -s
-==187== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
+==476== Memcheck, a memory error detector
+==476== Copyright (C) 2002-2022, and GNU GPL'd, by Julian Seward et al.
+==476== Using Valgrind-3.22.0 and LibVEX; rerun with -h for copyright info
+==476== Command: ./demo_matrices add donnees/A.txt donnees/C.txt R.txt
+==476== Parent PID: 391
+==476== 
+==476== 
+==476== HEAP SUMMARY:
+==476==     in use at exit: 0 bytes in 0 blocks
+==476==   total heap usage: 14 allocs, 14 frees, 13,360 bytes allocated
+==476== 
+==476== All heap blocks were freed -- no leaks are possible
+==476== 
+==476== For lists of detected and suppressed errors, rerun with: -s
+==476== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
 ```
 
 

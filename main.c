@@ -91,8 +91,8 @@ int main(int argc, char *argv[])
     MatErreur err = addition ? mat_additionner(&a,&b,&r) :mat_multiplier(&a,&b,&r);
 
     if(err !=MAT_OK){
-        fprintf(stderr,"Erreur : calcule impossible : %s", mat_message_erreur(err));
-        fprintf(stderr,"(A : %d x %d, B: %d x %d)\n", a.nb_lignes, a.nb_colonnes,b.nb_lignes,b.nb_colonnes);
+        fprintf(stderr,"Erreur : calcul impossible : %s ", mat_message_erreur(err));
+        fprintf(stderr,"(A : %d x %d, B : %d x %d)\n", a.nb_lignes, a.nb_colonnes,b.nb_lignes,b.nb_colonnes);
         goto nettoyage;
     }
 
@@ -107,7 +107,7 @@ int main(int argc, char *argv[])
     /* (4.d) À COMPLÉTER : tout a réussi :
      *         - afficher "Résultat enregistré dans \"...\"." ;
      *         - statut = EXIT_SUCCESS;                                 */
-    printf("Resultat enregistré dans \" %s\".\n",argv[4]);
+    printf("Résultat enregistré dans \"%s\".\n",argv[4]);
     statut = EXIT_SUCCESS;
 
 nettoyage:
