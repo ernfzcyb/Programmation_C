@@ -1,6 +1,6 @@
-# _Projet a rendre Programation en C_
+# _Projet a rendre Programmation en C_
 
-## Groupe Noé Ferre--Zekry, Mickael Longché, Anas hamdi
+## Groupe Noé Ferre--Zekry, Mickael Longché, Anas Hamdi
 
 ### Rapport :
 #### **exercice 1**
@@ -13,18 +13,18 @@
 ```
 avec description du cas de dépassement de mémoire
 
-- *1.b :* Nous avons ajouter un return afin de renvoyer le resultat de toute les condition
-````c
+- *1.b :* Nous avons ajouté un return afin de renvoyer le resultat de toutes les conditions
+```c
               return m != NULL &&
               m->coef != NULL &&   
               m->nb_lignes >= 1 && m->nb_lignes <= MAT_DIM_MAX &&
               m->nb_colonnes >= 1 && m->nb_colonnes <= MAT_DIM_MAX; 
-````
+```
 Nous avons mis en commentaire les ligne provisoire :
 ```c
     (void)m;      
     return 0;
-````
+```
 - *1.c :*
 ```c
     if ((((nb_lignes < 1) || (nb_lignes > MAT_DIM_MAX)))||(((nb_colonnes < 1) || (nb_colonnes > MAT_DIM_MAX)))){
@@ -35,11 +35,11 @@ Nous avons mis en commentaire les ligne provisoire :
 - *1.d :*
 ```c
         for (int i = 0; i < nb_lignes; i++) {
-            coef[i] = mat_calloc((size_t)nb_colonnes,sizeof*coef[i]);    // nb_colonnes entiers
+            coef[i] = mat_calloc((size_t)nb_colonnes,sizeof*coef[i]);    
             if (coef[i] == NULL) {
-                for (int k = i - 1; k >= 0; k--)  // lignes déjà
-                    free(coef[k]);                // obtenues
-                free(coef);                       // puis le tableau
+                for (int k = i - 1; k >= 0; k--)  
+                    free(coef[k]);               
+                free(coef);                       
                 return MAT_ERR_ALLOCATION;
             }
         }  
@@ -62,7 +62,7 @@ Nous avons commenté ces lignes provisoire :
     {
         for (int i = 0; i < m->nb_lignes; i++) {
             free(m->coef[i]); 
-            }               // obtenues
+            }               
             free(m->coef);                                   
     } 
 ```
@@ -109,13 +109,13 @@ Pensez a verifier l'absence de fuite : valgrind --leak-check=full ./test_ex1
 *Pourquoi mat_detruire prend-elle un Matrice * et non un Matrice ? Que se passerait-il,pour l'appelant, avec un passage par valeur ?*
 
 **Reponse :**
-mat_detruire est une fonction qui sert a libéré l'emplacement mémoire d'une matrice vide qui est formé de tableau dynamique. En prenant juste Matrice on travailleurais une une variable locale qui ce qui ne changerait pas la matrice original qu'on cherche a libéré. Par valeur, l'appelant garde un coef qui pointe vers de la memoire liberer
+mat_detruire est une fonction qui sert a libérer l'emplacement mémoire d'une matrice vide qui est formé de tableau dynamique. En prenant juste Matrice on travaillerais une une variable locale qui ce qui ne changerait pas la matrice original qu'on cherche a libéré. Par valeur, l'appelant garde un coef qui pointe vers de la memoire liberée
 
 #### Q3.2 
 *Combien d'appels à calloc et à free faut-il pour une matrice n x p ? Si la k-ième allocation échoue, combien de libérations mat_allouer doit-elle effectuer ?*
 
 **Reponse :** On doit faire autant de free que de calloc soit n + 1 (1 pour le tableau de taille p qui regroupe les autre tableu et n autre tableau a défini)
-Dans le cas l'allocation échoue(coef[i] == NULL)  mat_allouer doit free i-1 fois
+Dans le cas ou l'allocation échoue(coef[i] == NULL)  mat_allouer doit free i-1 fois
 
 #### Q3.3 
 *Appeler deux fois free sur la même adresse est un comportement indéfini. Pourquoi appeler
@@ -127,7 +127,7 @@ La fonction mat_detruire prend un pointeur vers une structure. En premier il tes
 Matrice b = a
 Le pointeur interne b.coef pointe vers exactement la meme zone memoire que
 a.coef. Les deux matrices partagent le même tableau de données.
-donc au Premier appel mat_detruire(&a) libèrerat la tableau ensuite il y aura une erreur  car mat_detruire(&b) pointera encore vers une zone memoir déjà désallouer il y aura un comportement indefini.
+donc au Premier appel mat_detruire(&a) libérera la tableau ensuite il y aura une erreur  car mat_detruire(&b) pointera encore vers une zone memoire déjà désallouée il y aura un comportement indefini.
 
 #### Q3.4 
 *Pourquoi mat_allouer commence-t-elle par l'affectation* *res =MATRICE_VIDE, avant même de vérifier les dimensions ?*
@@ -258,15 +258,15 @@ Donc il ne vérifie pas chaque ligne
 
 Ce n'est pas génant car on vérifie les mots en entrée,
 
-Celon le principe de tolérant en lecture, strict en écriture : On veux un format canonique définie en écriture et on accepte des variations sans importance en lecture car la tolérance ne porte que sur la forme et non le contenue ce qui permet une meilleur flexibilité en lecture mais une rigeure en écriture ce qui rend le code plus robuste.
+Selon le principe de tolérant en lecture, strict en écriture : On veux un format canonique définie en écriture et on accepte des variations sans importance en lecture car la tolérance ne porte que sur la forme et non le contenu ce qui permet une meilleur flexibilité en lecture mais une rigeure en écriture ce qui rend le code plus robuste.
 
 #### Q4.3
 *Après l'appel mat_lire(f, &m), le flux f est positionné après le dernier coefficient. Comment exploiter cette propriété pour stocker deux matrices dans un même fichier ?*
 
 **Reponse :**
 
-mat_lire déplace le curseur du fichier exactement apres les dimentions et les coefficients le flux est positionné apres le dernier coefficient.Donc en appelant la fonction une nouvelle fois sur le meme FILE* il continura a lire si une autre matrice ce trouve apres.
-Pour utiliser mat_ecrire sur le meme FILE * le principe est le meme écrire sur le meme fichier car le flux est bien positioné a la fin de la première execution  
+mat_lire déplace le curseur du fichier exactement apres les dimensions et les coefficients le flux est positionné apres le dernier coefficient.Donc en appelant la fonction une nouvelle fois sur le meme FILE* il continura a lire si une autre matrice se trouve apres.
+Pour utiliser mat_ecrire sur le meme FILE * le principe est le meme écrire sur le meme fichier car le flux est bien positionné a la fin de la première execution  
 
 #### Q4.4 
 *Pourquoi mat_ecrire appelle-t-elle fflush avant de renvoyer MAT_OK ? Cela dispense-t-il
@@ -274,7 +274,7 @@ Pour utiliser mat_ecrire sur le meme FILE * le principe est le meme écrire sur 
 l'appelant de tester fclose ?*
 
 **Reponse :**
-fflush va forcer l'écriture du tampon, fprintf et fputc écrive sur des buffer avant d'enregistré en mémoire on pourrais avoir une erreur entre l'écriture sur le disque et le buffer. Donc fflush permet de ce premunir de cette erreur afin d'etre sur qu'on a pas l'état MAT_ERR_ECRITURE a la place de MAT_OK. Enfin ça ne dispance pas de faire un fclose. fclose ferme le flux alors que fflush force juste l'écriture
+fflush va forcer l'écriture du tampon, fprintf et fputc écrive sur des buffer avant d'enregistré en mémoire on pourrais avoir une erreur entre l'écriture sur le disque et le buffer. Donc fflush permet de ce premunir de cette erreur afin d'etre sur qu'on a pas l'état MAT_ERR_ECRITURE a la place de MAT_OK. Enfin ça ne dispense pas de faire un fclose. fclose ferme le flux alors que fflush force juste l'écriture
 
 
 #### **exercice 3**
@@ -392,7 +392,7 @@ Non. Avec const Matrice *a, c'est la structure qui est constante : on ne peut pa
 Pour que le compilateur refuse cette affectation, il faudrait que le type des coefficients soit constant, par exemple un champ const int *const *coef (ou une structure « vue en lecture » séparée pour les entrées). Comme matrice.h est imposé, chez nous la non-modification des entrées est une règle (R4) que nous respectons et que test_ex3 vérifie (« a et b n'ont pas été modifiées »).
 #### Q5.2
 *Pourquoi refuse-t-on l’appel mat_additionner(&a, &b, &a) alors que, mathématiquement,
-a ←a+baunsens?Quesepasserait-il avec notre implémentation si on l’acceptait ?
+a ←a+b a un sens ? Que se passerait-il avec notre implémentation si on l’acceptait ?
 
 **Reponse :**
 Parce que res est un paramètre de sortie (R5) : la fonction commence par l'écraser. Dans notre code, verifier_parametres fait *res = MATRICE_VIDE; si res == &a, la matrice a serait vidée avant d'être lue : son tableau coef serait perdu (fuite de toute la mémoire de a) et mat_est_valide(a) renverrait 0. Même sans cette ligne, on finirait par *res = r;, qui remplace a.coef par celui de r sans libérer l'ancien : fuite. Pour la multiplication, calculer « sur place » serait de toute façon faux, car les coefficients de a déjà écrasés sont encore nécessaires pour les cases suivantes. C'est pourquoi verifier_parametres renvoie MAT_ERR_ARGUMENT si res == a || res == b avant de toucher à *res (test « resultat = entree refuse, a reste intacte »). Pour faire a <- a + b, l'appelant calcule dans r, puis mat_detruire(&a); a = r;.
@@ -585,4 +585,4 @@ Usage : ./demo_matrices <add|mul> <fichier_A> <fichier_B> <fichier_R>
 ==1117== 
 ==1117== For lists of detected and suppressed errors, rerun with: -s
 ==1117== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
-````
+```
