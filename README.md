@@ -388,14 +388,14 @@ Pas toujours. tient_dans_int vérifie que la valeur est entre INT_MIN et INT_MAX
  exactement ce const ? Que faudrait-il changer pour que le compilateur refuse cette affectation ?
 
 **Reponse :**
-Non. Avec const Matrice *a, c'est la **structure** qui est constante : on ne peut pas écrire a->nb_lignes = 0; ni a->coef = NULL;. Mais le champ coef est de type int ** : a->coef est un pointeur constant vers des int * non constants, donc a->coef[0][0] est un int modifiable et a->coef[0][0] = 7; compile sans avertissement. Le const protège donc seulement les trois champs de la structure, pas les coefficients rangés dans le tas.
+Non. Avec const Matrice *a, c'est la structure qui est constante : on ne peut pas écrire a->nb_lignes = 0; ni a->coef = NULL;. Mais le champ coef est de type int ** : a->coef est un pointeur constant vers des int * non constants, donc a->coef[0][0] est un int modifiable et a->coef[0][0] = 7; compile sans avertissement. Le const protège donc seulement les trois champs de la structure, pas les coefficients rangés dans le tas.
 Pour que le compilateur refuse cette affectation, il faudrait que le type des coefficients soit constant, par exemple un champ const int *const *coef (ou une structure « vue en lecture » séparée pour les entrées). Comme matrice.h est imposé, chez nous la non-modification des entrées est une règle (R4) que nous respectons et que test_ex3 vérifie (« a et b n'ont pas été modifiées »).
 #### Q5.2
 *Pourquoi refuse-t-on l’appel mat_additionner(&a, &b, &a) alors que, mathématiquement,
 a ←a+baunsens?Quesepasserait-il avec notre implémentation si on l’acceptait ?
 
 **Reponse :**
-Parce que res est un paramètre de **sortie** (R5) : la fonction commence par l'écraser. Dans notre code, verifier_parametres fait *res = MATRICE_VIDE; si res == &a, la matrice a serait vidée **avant** d'être lue : son tableau coef serait perdu (fuite de toute la mémoire de a) et mat_est_valide(a) renverrait 0. Même sans cette ligne, on finirait par *res = r;, qui remplace a.coef par celui de r sans libérer l'ancien : fuite. Pour la multiplication, calculer « sur place » serait de toute façon faux, car les coefficients de a déjà écrasés sont encore nécessaires pour les cases suivantes. C'est pourquoi verifier_parametres renvoie MAT_ERR_ARGUMENT si res == a || res == b **avant** de toucher à *res (test « resultat = entree refuse, a reste intacte »). Pour faire a <- a + b, l'appelant calcule dans r, puis mat_detruire(&a); a = r;.
+Parce que res est un paramètre de sortie (R5) : la fonction commence par l'écraser. Dans notre code, verifier_parametres fait *res = MATRICE_VIDE; si res == &a, la matrice a serait vidée avant d'être lue : son tableau coef serait perdu (fuite de toute la mémoire de a) et mat_est_valide(a) renverrait 0. Même sans cette ligne, on finirait par *res = r;, qui remplace a.coef par celui de r sans libérer l'ancien : fuite. Pour la multiplication, calculer « sur place » serait de toute façon faux, car les coefficients de a déjà écrasés sont encore nécessaires pour les cases suivantes. C'est pourquoi verifier_parametres renvoie MAT_ERR_ARGUMENT si res == a || res == b avant de toucher à *res (test « resultat = entree refuse, a reste intacte »). Pour faire a <- a + b, l'appelant calcule dans r, puis mat_detruire(&a); a = r;.
 #### Q5.3
  *Combien de multiplications d’entiers effectue mat_multiplier pour des matrices n × p et
  p ×q ?Combien pour deux matrices 1000×1000 ?
@@ -461,7 +461,8 @@ $ cat R.txt
 19 38 17
 52 96 19
 10 23 7
-
+```
+```bash
 $ ./demo_matrices mul donnees/A.txt donnees/C.txt R.txt
 A (4 x 3) :
        25       48       84
@@ -480,7 +481,8 @@ R = A x B (4 x 2) :
 Résultat enregistré dans "R.txt".
 $ echo $?
 0
-
+```
+```bash
 $ ./demo_matrices add donnees/A.txt donnees/C.txt R.txt
 A (4 x 3) :
        25       48       84
@@ -494,7 +496,9 @@ B (3 x 2) :
 Erreur : calcul impossible : dimensions incompatibles (A : 4 x 3, B : 3 x 2)
 $ echo $?
 1
+```
 
+```bash
 $ ./demo_matrices add donnees/invalide.txt donnees/B.txt R.txt
 Erreur : lecture de "donnees/invalide.txt" : fichier mal formé
 $ echo $?
