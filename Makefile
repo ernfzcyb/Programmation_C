@@ -1,5 +1,4 @@
 # Makefile -- TD Stockage de matrices en C
-#
 #   make           compile les 3 tests et le programme de demonstration
 #   make tests     compile et lance test_ex1, test_ex2, test_ex3
 #   make valgrind  lance les 3 tests et un scenario de demo sous valgrind
